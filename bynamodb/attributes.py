@@ -1,5 +1,5 @@
 from boto.dynamodb2.types import (STRING, STRING_SET, BINARY, BINARY_SET,
-                                  NUMBER, NUMBER_SET)
+                                  NUMBER, NUMBER_SET, LIST)
 
 
 class Attribute(object):
@@ -87,3 +87,10 @@ class BinarySetAttribute(SetAttribute):
 class NumberSetAttribute(SetAttribute):
     type = NUMBER_SET
     set_of = NumberAttribute
+
+
+class ListAttribute(Attribute):
+    type = LIST
+
+    def valid(cls, value):
+        return type(value) == list
