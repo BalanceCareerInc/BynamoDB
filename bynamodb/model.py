@@ -3,7 +3,7 @@ from boto.dynamodb2.fields import HashKey, RangeKey
 from boto.dynamodb2.types import Dynamizer
 
 from .attributes import Attribute
-from .exceptions import NullAttributeException
+from .exceptions import NullAttributeException, ItemNotFoundException
 from .indexes import Index, GlobalIndex
 
 
@@ -64,6 +64,11 @@ class Model(object):
 
     def save(self):
         self._put_item(self)
+
+    def delete(self):
+        key_fields = [key.name for key in self._get_keys()]
+        key = dict((key, getattr(self, key)) for key in key_fields)
+        return self._get_connection().delete_item(self.get_table_name(), key)
 
     @classmethod
     def create_table(cls, read_throughput=5, write_throughput=5):
@@ -136,6 +141,8 @@ class Model(object):
         """ Get item from the table."""
         key = cls._encode_key(hash_key, range_key)
         raw_data = cls._get_connection().get_item(cls.get_table_name(), key)
+        if 'Item' not in raw_data:
+            raise ItemNotFoundException
         return cls.from_raw_data(raw_data['Item'])
 
     @classmethod
