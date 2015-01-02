@@ -127,7 +127,7 @@ class Model(object):
         data = {}
         for name, attr in cls._get_attributes().items():
             attr_value = getattr(item, name, None)
-            if not attr_value:
+            if attr_value is None:
                 if not attr.null:
                     raise NullAttributeException(
                         'Attribute {0} cannot be null'.format(name))
