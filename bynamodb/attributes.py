@@ -1,3 +1,4 @@
+from boto.dynamodb.types import Dynamizer
 from boto.dynamodb2.types import (STRING, STRING_SET, BINARY, BINARY_SET,
                                   NUMBER, NUMBER_SET, LIST)
 
@@ -112,3 +113,6 @@ class ListAttribute(Attribute):
 
     def valid(cls, value):
         return type(value) == list
+
+    def _encode(self, value):
+        return {self.type: [Dynamizer().encode(v) for v in value]}
