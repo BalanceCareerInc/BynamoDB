@@ -1,6 +1,6 @@
 from boto.dynamodb.types import Dynamizer
 from boto.dynamodb2.types import (STRING, STRING_SET, BINARY, BINARY_SET,
-                                  NUMBER, NUMBER_SET, LIST)
+                                  NUMBER, NUMBER_SET, LIST, MAP)
 
 
 class Attribute(object):
@@ -62,7 +62,7 @@ class StringAttribute(Attribute):
     @classmethod
     def valid(cls, value):
         value_type = type(value)
-        return value_type == str or value_type == unicode
+        return value_type in (str, unicode)
 
 
 class BinaryAttribute(Attribute):
@@ -70,7 +70,7 @@ class BinaryAttribute(Attribute):
 
     @classmethod
     def valid(cls, value):
-        return type(value) == str
+        return type(value) is str
 
 
 class NumberAttribute(Attribute):
@@ -78,7 +78,7 @@ class NumberAttribute(Attribute):
 
     @classmethod
     def valid(cls, value):
-        return type(value) == int
+        return type(value) is int
 
 
 class SetAttribute(Attribute):
@@ -86,7 +86,7 @@ class SetAttribute(Attribute):
 
     @classmethod
     def valid(cls, value):
-        return (type(value) == set and
+        return (type(value) is set and
                 all(cls.set_of.valid(elem) for elem in value))
 
 
@@ -109,4 +109,11 @@ class ListAttribute(Attribute):
     type = LIST
 
     def valid(cls, value):
-        return type(value) == list
+        return type(value) is list
+
+
+class MapAttribute(Attribute):
+    type = MAP
+
+    def valid(cls, value):
+        return type(value) is dict
