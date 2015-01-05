@@ -1,6 +1,6 @@
 from boto.dynamodb.types import Dynamizer
 from boto.dynamodb2.types import (STRING, STRING_SET, BINARY, BINARY_SET,
-                                  NUMBER, NUMBER_SET, LIST, MAP)
+                                  NUMBER, NUMBER_SET, LIST, MAP, BOOLEAN)
 
 
 class Attribute(object):
@@ -63,6 +63,14 @@ class StringAttribute(Attribute):
     def valid(cls, value):
         value_type = type(value)
         return value_type in (str, unicode)
+
+
+class BooleanAttribute(Attribute):
+    type = BOOLEAN
+
+    @classmethod
+    def valid(cls, value):
+        return type(value) is bool
 
 
 class BinaryAttribute(Attribute):
