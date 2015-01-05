@@ -53,7 +53,7 @@ class Attribute(object):
         return self._encode(value)
 
     def _encode(self, value):
-        return {self.type: value}
+        return Dynamizer().encode(value)
 
 
 class StringAttribute(Attribute):
@@ -89,9 +89,6 @@ class SetAttribute(Attribute):
         return (type(value) == set and
                 all(cls.set_of.valid(elem) for elem in value))
 
-    def _encode(self, value):
-        return {self.type: list(value)}
-
 
 class StringSetAttribute(SetAttribute):
     type = STRING_SET
@@ -113,6 +110,3 @@ class ListAttribute(Attribute):
 
     def valid(cls, value):
         return type(value) == list
-
-    def _encode(self, value):
-        return {self.type: [Dynamizer().encode(v) for v in value]}
