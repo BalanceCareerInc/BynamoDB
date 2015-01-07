@@ -86,7 +86,7 @@ class NumberAttribute(Attribute):
 
     @classmethod
     def valid(cls, value):
-        return type(value) is int
+        return type(value) in (int, float)
 
 
 class SetAttribute(Attribute):
