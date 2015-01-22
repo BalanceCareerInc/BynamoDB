@@ -4,7 +4,7 @@ import subprocess
 
 from boto.dynamodb2.layer1 import DynamoDBConnection
 
-from bynamodb import patch_dynamodb_connection
+from bynamodb import init_bynamodb
 
 
 process = None
@@ -25,7 +25,7 @@ def pytest_configure():
         '-dbPath', 'tests/local_dynamodb/testdb/'
     ], stdout=dev_null, stderr=dev_null)
 
-    patch_dynamodb_connection(host=host, port=port, is_secure=False)
+    init_bynamodb(host=host, port=port, is_secure=False)
     conn = DynamoDBConnection()
     assert conn.host == host
     assert conn.port == port

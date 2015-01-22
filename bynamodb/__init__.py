@@ -1,7 +1,23 @@
 from boto.dynamodb2.layer1 import DynamoDBConnection
 
+from .settings import conf
 
-def patch_dynamodb_connection(**kwargs):
+__all__ = 'init_bynamodb'
+
+
+def init_bynamodb(config=None, **kwargs):
+    if config is None:
+        config = dict()
+    config.update(kwargs)
+    conf.load_settings_from(config)
+    _patch_dynamodb_connection(
+        host=conf.get('host'),
+        port=conf.get('port'),
+        is_secure=conf.get('is_secure')
+    )
+
+
+def _patch_dynamodb_connection(**kwargs):
     """:class:`boto.dynamodb2.layer1.DynamoDBConnection` patcher.
 
     It partially applies the keyword arguments to the
