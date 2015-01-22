@@ -75,9 +75,12 @@ class Model(object):
         return self._get_connection().delete_item(self.get_table_name(), key)
 
     @classmethod
-    def create_table(cls, read_throughput=5, write_throughput=5):
+    def create_table(cls, read_throughput=None, write_throughput=None):
         """Create the table as the schema definition."""
         table_name = cls.get_table_name()
+
+        read_throughput = read_throughput or getattr(cls, 'read_throughput', 5)
+        write_throughput = write_throughput or getattr(cls, 'write_throughput', 5)
 
         raw_throughput = {
             'ReadCapacityUnits': read_throughput,
