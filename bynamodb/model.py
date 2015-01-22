@@ -5,6 +5,7 @@ from boto.dynamodb2.fields import HashKey, RangeKey
 from boto.dynamodb2.types import Dynamizer
 
 from .attributes import Attribute
+from .settings import conf
 from .conditions import KEY_CONDITIONS, build_condition
 from .exceptions import NullAttributeException, ItemNotFoundException
 from .indexes import Index, GlobalIndex
@@ -238,7 +239,7 @@ class Model(object):
 
     @classmethod
     def get_table_name(cls):
-        return cls.table_name or cls.__name__
+        return '%s%s' % (conf['TABLE_PREFIX'], cls.table_name or cls.__name__)
 
     @classmethod
     def _get_keys(cls):
