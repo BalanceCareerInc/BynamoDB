@@ -5,7 +5,9 @@ __all__ = 'conf'
 
 class Settings(object):
     def __init__(self):
-        self.config = dict()
+        self.config = dict(
+            TABLE_PREFIX=''
+        )
 
     def __getitem__(self, key):
         return self.config[key]
