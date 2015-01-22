@@ -25,7 +25,10 @@ def pytest_configure():
         '-dbPath', 'tests/local_dynamodb/testdb/'
     ], stdout=dev_null, stderr=dev_null)
 
-    init_bynamodb(host=host, port=port, is_secure=False)
+    init_bynamodb(
+        DYNAMODB_HOST=host,
+        DYNAMODB_PORT=port,
+        DYNAMODB_IS_SECURE=False)
     conn = DynamoDBConnection()
     assert conn.host == host
     assert conn.port == port

@@ -11,9 +11,9 @@ def init_bynamodb(config=None, **kwargs):
     config.update(kwargs)
     conf.load_settings_from(config)
     _patch_dynamodb_connection(
-        host=conf.get('host'),
-        port=conf.get('port'),
-        is_secure=conf.get('is_secure')
+        host=conf.get('DYNAMODB_HOST'),
+        port=conf.get('DYNAMODB_PORT'),
+        is_secure=conf.get('DYNAMODB_IS_SECURE')
     )
 
 
