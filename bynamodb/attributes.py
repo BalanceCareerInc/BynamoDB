@@ -56,6 +56,9 @@ class Attribute(object):
     def _encode(self, value):
         return Dynamizer().encode(value)
 
+    def decode(self, value):
+        return value
+
 
 class StringAttribute(Attribute):
     type = STRING
