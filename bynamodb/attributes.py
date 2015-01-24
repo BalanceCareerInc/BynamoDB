@@ -1,3 +1,4 @@
+from decimal import Decimal
 from boto.dynamodb.types import Dynamizer
 from boto.dynamodb2.types import (STRING, STRING_SET, BINARY, BINARY_SET,
                                   NUMBER, NUMBER_SET, LIST, MAP, BOOLEAN)
@@ -87,6 +88,15 @@ class NumberAttribute(Attribute):
     @classmethod
     def valid(cls, value):
         return type(value) in (int, float)
+
+    def decode(self, value):
+        value = Dynamizer().decode(value)
+        if isinstance(value, Decimal):
+            if '.' in str(value):
+                return float(value)
+            else:
+                return int(value)
+        return value
 
 
 class SetAttribute(Attribute):
