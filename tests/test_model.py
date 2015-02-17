@@ -1,7 +1,8 @@
 from _pytest.python import raises, fixture
 from boto.dynamodb2.layer1 import DynamoDBConnection
 
-from bynamodb.attributes import StringAttribute, StringSetAttribute
+from bynamodb.attributes import (NumberAttribute, StringAttribute,
+                                 StringSetAttribute)
 from bynamodb.exceptions import NullAttributeException, ItemNotFoundException
 from bynamodb.filterexps import GT
 from bynamodb.indexes import GlobalAllIndex, AllIndex
@@ -205,24 +206,27 @@ def fx_query_test_items(fx_query_test_model):
 
 
 def test_scan(fx_query_test_model, fx_query_test_items):
-    items = list(fx_query_test_model.scan())
-    assert len(items) == 6
+    result = fx_query_test_model.scan()
+    items = list(result)
+    assert result.count() == 6
     assert all(type(item) == fx_query_test_model for item in items)
 
 
 def test_scan_with_filter_operator(fx_query_test_model, fx_query_test_items):
     gt = GT('published_at', 'bbbbb')
-    items = list(fx_query_test_model.scan(filter_builder=gt))
-    assert len(items) == 3
+    result = fx_query_test_model.scan(filter_builder=gt)
+    items = list(result)
+    assert result.count() == 3
     assert all([item.published_at > 'bbbbb' for item in items])
 
 
 def test_query(fx_query_test_model, fx_query_test_items):
-    items = list(fx_query_test_model.query(published_at__eq='aaaaa'))
-    assert all(item.published_at == 'aaaaa' for item in items)
+    result = fx_query_test_model.query(published_at__eq='aaaaa')
+    assert result.count() == 2
+    assert all(item.published_at == 'aaaaa' for item in result)
 
 
-@fixture()
+@fixture
 def fx_model_with_set_attr():
     class TestModel(Model):
         hash_key = StringAttribute(hash_key=True)
@@ -245,3 +249,19 @@ def test_default_set_not_modified(fx_model_with_set_attr):
     item = fx_model_with_set_attr(hash_key='hash_key')
     item.attr.add('value')
     assert fx_model_with_set_attr.attr.default == set()
+
+
+@fixture
+def fx_model_with_number_attr():
+    class TestModel(Model):
+        hash_key = StringAttribute(hash_key=True)
+        attr = NumberAttribute()
+    TestModel.create_table()
+    return TestModel
+
+
+def test_model_with_number_attr(fx_model_with_number_attr):
+    fx_model_with_number_attr.put_item(hash_key='hash', attr=12.34)
+    item = fx_model_with_number_attr.get_item('hash')
+    assert type(item.attr) == float
+    item.save()
